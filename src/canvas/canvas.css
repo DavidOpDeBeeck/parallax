@@ -1,0 +1,156 @@
+* {
+  box-sizing: border-box;
+}
+
+/* The board is ink and grey only, so the only colours on it are the views' own. */
+:root {
+  --background: #ffffff;
+  --ink: #1f2328;
+  --muted: #656d76;
+  --line: #d0d7de;
+  --accent: #4f46e5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0d1117;
+    --ink: #e6edf3;
+    --muted: #8d96a0;
+    --line: #30363d;
+    --accent: #a5b4fc;
+  }
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--ink);
+  font:
+    13px system-ui,
+    -apple-system,
+    "Segoe UI",
+    Helvetica,
+    Arial,
+    sans-serif;
+}
+
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  align-items: center;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+.bar .logo {
+  height: 20px;
+  color: var(--ink);
+}
+
+.bar .logo .accent {
+  stroke: var(--accent);
+}
+
+.bar h1 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.bar .commits {
+  color: var(--muted);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.bar .hint {
+  margin-left: auto;
+  color: var(--muted);
+}
+
+kbd {
+  padding: 0 4px;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  font: inherit;
+}
+
+.viewport {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+}
+
+.viewport:focus-visible {
+  outline: 2px solid var(--muted);
+  outline-offset: -2px;
+}
+
+.viewport.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.board {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 64px;
+  align-items: flex-start;
+  width: max-content;
+  transform-origin: 0 0;
+}
+
+.area {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.area > h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.area .nothing {
+  margin: 0;
+  color: var(--muted);
+}
+
+.view {
+  margin: 0;
+}
+
+.view h2 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* Until it is entered, a view is part of the board: pointing at it pans and zooms the board. */
+.view iframe {
+  display: block;
+  box-sizing: content-box;
+  width: 880px;
+  height: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+.view.entered iframe {
+  outline: 2px solid var(--muted);
+  outline-offset: 2px;
+  pointer-events: auto;
+}

@@ -1,0 +1,37 @@
+{
+  "name": "parallax",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Compares two commits and draws what changed in each part of a system.",
+  "type": "module",
+  "exports": {
+    ".": "./src/api.ts"
+  },
+  "bin": {
+    "parallax": "bin/parallax.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "parallax": "node src/cli.ts",
+    "test": "node --test --test-randomize \"test/**/*.test.ts\"",
+    "typecheck": "tsc",
+    "lint": "biome check",
+    "format": "biome check --write"
+  },
+  "dependencies": {
+    "esbuild": "0.28.2",
+    "playwright": "1.65.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.8",
+    "@types/node": "^26.6.6",
+    "@types/pngjs": "^6.0.5",
+    "pngjs": "^7.0.0",
+    "preact": "^11.2.0",
+    "preact-render-to-string": "^6.8.3",
+    "typescript": "^7.0.2",
+    "yaml": "^2.9.1"
+  }
+}
