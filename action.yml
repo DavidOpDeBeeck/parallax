@@ -1,0 +1,72 @@
+name: parallax
+description: Shows what a pull request changed in each part of the system, and keeps one comment on it.
+inputs:
+  github-token:
+    description: Writes the comment on the pull request; the job needs "pull-requests write".
+    default: ${{ github.token }}
+  attach-token:
+    description: >-
+      Attaches the comment's pictures, which only who can read the repository then sees: a person's (or a bot
+      account's) token that can push to the repository, as a workflow's own token can't attach files. Without it, the
+      comment step fails.
+    required: true
+  base:
+    description: The ref the head is compared with; the pull request's base by default.
+    default: ""
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "24"
+
+    - name: Install parallax
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: |
+        # Keep the packages a repository already installed here, as parallax's own does.
+        if [ ! -d node_modules ]; then npx --yes pnpm@11.1.2 install --prod --frozen-lockfile; fi
+        # The Chromium this version of Playwright drives.
+        node_modules/.bin/playwright install chromium
+
+    - name: Draw
+      shell: bash
+      env:
+        CLI: ${{ github.action_path }}/src/cli.ts
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha }}
+        HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      run: |
+        # parallax needs the history back to where the pull request's branch left its base.
+        if [ "$(git rev-parse --is-shallow-repository)" = true ]; then git fetch --quiet --unshallow; fi
+        # Without a pull request, the base is the head: the repository as it stands, with nothing changed.
+        node "$CLI" --base "${BASE:-$HEAD}" --head "$HEAD"
+
+    - name: Take pictures
+      shell: bash
+      env:
+        PICTURES: ${{ github.action_path }}/src/github/pictures-cli.ts
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha }}
+        HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+      run: node "$PICTURES" --base "${BASE:-$HEAD}" --head "$HEAD"
+
+    - name: Keep the pages, canvas and pictures
+      uses: actions/upload-artifact@v4
+      with:
+        name: parallax
+        path: .parallax/
+        include-hidden-files: true
+        if-no-files-found: ignore
+
+    - name: Comment
+      # A pull request from a fork gets a read-only token and no secrets: it is drawn and kept, not commented on.
+      if: github.event.pull_request && github.event.pull_request.head.repo.full_name == github.repository
+      shell: bash
+      env:
+        COMMENT: ${{ github.action_path }}/src/github/comment-cli.ts
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+        PARALLAX_ATTACH_TOKEN: ${{ inputs.attach-token }}
+        # The version the workflow ran; an action used from the repository's own checkout (`uses: ./`) is its head.
+        PARALLAX_COMMAND: ${{ format('npx --yes github:{0}#{1}', github.action_repository || github.repository, github.action_ref || github.event.pull_request.head.sha) }}
+        BASE: ${{ inputs.base || github.event.pull_request.base.sha }}
+        HEAD: ${{ github.event.pull_request.head.sha }}
+      run: node "$COMMENT" --base "$BASE" --head "$HEAD"

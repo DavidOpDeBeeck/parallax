@@ -1,0 +1,31 @@
+name: parallax
+
+on:
+  pull_request:
+
+concurrency:
+  group: parallax-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  parallax:
+    # Only pull requests from this repository's own branches: a fork's would run its code with no secrets.
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npx --yes pnpm@11.1.2 install --frozen-lockfile
+      - run: npx playwright install chromium
+      - uses: ./
+        with:
+          attach-token: ${{ secrets.PARALLAX_ATTACH_TOKEN }}
