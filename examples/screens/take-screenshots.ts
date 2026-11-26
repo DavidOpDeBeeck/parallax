@@ -5,6 +5,7 @@ import { chromium, type Page } from "playwright"
 
 const pages = [
   { name: "Home", file: "index.html" },
+  { name: "Labels", file: "labels.html" },
   { name: "Reports", file: "reports.html" },
   { name: "Settings", file: "settings.html" },
 ]

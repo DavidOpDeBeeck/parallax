@@ -6,15 +6,15 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header><strong>Tickets</strong><nav><a href="index.html">Home</a><a href="settings.html">Settings</a></nav></header>
+<header><strong>Tickets</strong><nav><a href="index.html">Home</a><a href="labels.html">Labels</a><a href="settings.html">Settings</a></nav></header>
 <main>
 <h1>Tickets waiting for you</h1>
 <p class="lead">Everything that still needs an answer.</p>
 <table>
-<tr><th>Ticket</th><th>Title</th><th>Priority</th></tr>
-<tr><td>#142</td><td>Export fails on large boards</td><td>High</td></tr>
-<tr><td>#139</td><td>Search ignores closed tickets</td><td>Normal</td></tr>
-<tr><td>#131</td><td>Dark mode loses focus ring</td><td>Low</td></tr>
+<tr><th>Ticket</th><th>Title</th><th>Priority</th><th>Labels</th></tr>
+<tr><td>#142</td><td>Export fails on large boards</td><td>High</td><td><span class="label bug">bug</span><span class="label export">export</span></td></tr>
+<tr><td>#139</td><td>Search ignores closed tickets</td><td>Normal</td><td><span class="label search">search</span></td></tr>
+<tr><td>#131</td><td>Dark mode loses focus ring</td><td>Low</td><td><span class="label bug">bug</span><span class="label a11y">accessibility</span></td></tr>
 </table>
 <button type="button">New ticket</button><button type="button" class="quiet">Export</button>
 </main>
