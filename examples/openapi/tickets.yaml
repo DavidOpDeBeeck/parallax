@@ -1,8 +1,19 @@
 openapi: 3.0.3
 info:
   title: Tickets
-  version: 1.1.0
+  version: 2.0.0
 paths:
+  /labels:
+    get:
+      responses:
+        "200":
+          description: Every label a ticket can carry
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Label"
   /tickets/{id}:
     parameters:
       - name: id
@@ -52,7 +63,11 @@ components:
           enum: [low, normal, high]
         state:
           type: string
-          enum: [open, closed, archived]
+          enum: [open, closed]
+        labels:
+          type: array
+          items:
+            $ref: "#/components/schemas/Label"
     Comment:
       type: object
       required: [body]
@@ -60,4 +75,12 @@ components:
         id:
           type: string
         body:
+          type: string
+    Label:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        color:
           type: string

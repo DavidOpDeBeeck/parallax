@@ -86,3 +86,32 @@ select {
   border-radius: 6px;
   font: inherit;
 }
+.label {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 20px;
+}
+.label.bug {
+  background: #ffebe9;
+  color: #a40e26;
+}
+.label.export {
+  background: #ddf4ff;
+  color: #0550ae;
+}
+.label.search {
+  background: #fff8c5;
+  color: #7d4e00;
+}
+.label.a11y {
+  background: #fbefff;
+  color: #6e40c9;
+}
+.label.archived {
+  background: #eaeef2;
+  color: #57606a;
+}
