@@ -1,8 +1,10 @@
 # Examples
 
-What parallax can show, for ideas, and the playground parallax draws its own pull requests with. They are laid out the
-way [the skill](../skills/parallax-extension/SKILL.md) lays out a project's `parallax/` folder; helpers several of them
-use are in [`tools`](tools).
+The views parallax draws its own pull requests with. They're small on purpose: a starting point, not the limit. Think
+about how a change is best seen in your own application: a schema as a diagram, a workflow as the steps it now takes, a
+pricing rule as prices before and after, a permission as who can now do what. [The
+skill](../skills/parallax-extension/SKILL.md) helps you build your own; helpers several of these use are in
+[`tools`](tools).
 
 ## design
 

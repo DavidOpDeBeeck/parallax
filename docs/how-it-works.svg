@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="4 10 910 280" role="img" aria-label="An extension reads the base and head commit, compares them and shows what changed as views; parallax puts the views on a canvas and in a pull request comment." font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif">
+<rect x="5" y="11" width="908" height="278" rx="14" fill="#ffffff" stroke="#c9cbd8" stroke-width="1.5"/>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b6f85"/></marker></defs>
+
+<path d="M50 90V170" stroke="#c9cbd8" stroke-width="3"/>
+<circle cx="50" cy="90" r="9" fill="#ffffff" stroke="#1b1d2b" stroke-width="3"/>
+<circle cx="50" cy="170" r="9" fill="#ffffff" stroke="#1b1d2b" stroke-width="3"/>
+<text x="70" y="95" font-size="15" font-weight="600" fill="#1b1d2b" text-anchor="start">base</text>
+<text x="70" y="175" font-size="15" font-weight="600" fill="#1b1d2b" text-anchor="start">head</text>
+<path d="M112 90C140 90 150 112 174 116" fill="none" stroke="#6b6f85" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M112 170C140 170 150 148 174 144" fill="none" stroke="#6b6f85" stroke-width="2" marker-end="url(#arrow)"/>
+
+<rect x="180" y="50" width="220" height="160" rx="14" fill="#eef0ff" stroke="#4f46e5" stroke-width="2"/>
+<text x="198" y="84" font-size="17" font-weight="700" fill="#1b1d2b" text-anchor="start">Extension</text>
+<circle cx="208" cy="115" r="10" fill="#4f46e5"/><text x="208" y="120" font-size="12" font-weight="700" fill="#eef0ff" text-anchor="middle">1</text><text x="228" y="120" font-size="14" font-weight="400" fill="#1b1d2b" text-anchor="start">Reads each commit</text>
+<circle cx="208" cy="145" r="10" fill="#4f46e5"/><text x="208" y="150" font-size="12" font-weight="700" fill="#eef0ff" text-anchor="middle">2</text><text x="228" y="150" font-size="14" font-weight="400" fill="#1b1d2b" text-anchor="start">Compares the two</text>
+<circle cx="208" cy="175" r="10" fill="#4f46e5"/><text x="208" y="180" font-size="12" font-weight="700" fill="#eef0ff" text-anchor="middle">3</text><text x="228" y="180" font-size="14" font-weight="400" fill="#1b1d2b" text-anchor="start">Shows what changed</text>
+<path d="M406 130H444" fill="none" stroke="#6b6f85" stroke-width="2" marker-end="url(#arrow)"/>
+
+<rect x="474" y="64" width="92" height="104" rx="8" fill="#f6f7fb" stroke="#c9cbd8" stroke-width="1.5"/>
+<rect x="466" y="72" width="92" height="104" rx="8" fill="#f6f7fb" stroke="#c9cbd8" stroke-width="1.5"/>
+<rect x="458" y="80" width="92" height="104" rx="8" fill="#ffffff" stroke="#c9cbd8" stroke-width="1.5"/>
+<rect x="470" y="96" width="44" height="7" rx="3.5" fill="#e3e5ee"/>
+<rect x="470" y="112" width="68" height="7" rx="3.5" fill="#bfe5c8"/>
+<rect x="470" y="126" width="56" height="7" rx="3.5" fill="#bfe5c8"/>
+<rect x="470" y="140" width="62" height="7" rx="3.5" fill="#f6e3a8"/>
+<rect x="470" y="154" width="48" height="7" rx="3.5" fill="#f7c6c6"/>
+<rect x="470" y="168" width="36" height="7" rx="3.5" fill="#e3e5ee"/>
+<text x="508" y="210" font-size="15" font-weight="600" fill="#1b1d2b" text-anchor="middle">Views</text>
+<path d="M572 112C596 104 604 86 624 82" fill="none" stroke="#6b6f85" stroke-width="2" marker-end="url(#arrow)"/>
+<path d="M572 150C596 158 604 176 624 180" fill="none" stroke="#6b6f85" stroke-width="2" marker-end="url(#arrow)"/>
+
+<rect x="630" y="40" width="110" height="80" rx="8" fill="#f6f7fb" stroke="#c9cbd8" stroke-width="1.5"/>
+<path d="M630 48a8 8 0 0 1 8 -8h94a8 8 0 0 1 8 8v6h-110z" fill="#c9cbd8"/>
+<rect x="640" y="64" width="26" height="46" rx="3" fill="#ffffff" stroke="#4f46e5" stroke-width="1.5"/>
+<rect x="672" y="64" width="26" height="34" rx="3" fill="#ffffff" stroke="#4f46e5" stroke-width="1.5"/>
+<rect x="704" y="64" width="26" height="40" rx="3" fill="#ffffff" stroke="#4f46e5" stroke-width="1.5"/>
+<text x="756" y="76" font-size="15" font-weight="600" fill="#1b1d2b" text-anchor="start">Canvas</text>
+<text x="756" y="96" font-size="13" font-weight="400" fill="#6b6f85" text-anchor="start">to explore</text>
+
+<rect x="630" y="140" width="110" height="80" rx="8" fill="#f6f7fb" stroke="#c9cbd8" stroke-width="1.5"/>
+<circle cx="647" cy="156" r="7" fill="#c9cbd8"/>
+<rect x="660" y="153" width="50" height="7" rx="3.5" fill="#e3e5ee"/>
+<rect x="640" y="170" width="90" height="40" rx="4" fill="#ffffff" stroke="#4f46e5" stroke-width="1.5"/>
+<rect x="648" y="180" width="52" height="7" rx="3.5" fill="#bfe5c8"/>
+<rect x="648" y="194" width="38" height="7" rx="3.5" fill="#f7c6c6"/>
+<text x="756" y="176" font-size="15" font-weight="600" fill="#1b1d2b" text-anchor="start">Comment</text>
+<text x="756" y="196" font-size="13" font-weight="400" fill="#6b6f85" text-anchor="start">on the pull request</text>
+
+<path d="M180 238v6h386v-6" fill="none" stroke="#c9cbd8" stroke-width="1.5"/>
+<text x="373" y="262" font-size="13" font-weight="400" fill="#6b6f85" text-anchor="middle">yours, one per part of your system</text>
+<path d="M630 238v6h250v-6" fill="none" stroke="#c9cbd8" stroke-width="1.5"/>
+<text x="755" y="262" font-size="13" font-weight="400" fill="#6b6f85" text-anchor="middle">parallax</text>
+</svg>

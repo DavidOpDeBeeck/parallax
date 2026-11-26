@@ -1,119 +1,103 @@
 ---
 name: parallax-extension
-description: Set parallax up in a project and write its extensions, for a part of a system (an API, a database schema, message flows, screens, dependencies, the code), or change how one shows what changed. Use in a repository with a parallax.config.ts, or when asked to set parallax up, when a part of the system isn't shown yet, or when an extension's views don't show what a reviewer needs.
+description: Set parallax up in a project and write its extensions, views that show a reviewer what a change does to one part of a system (an API, a database schema, screens, a workflow, prices, permissions, the code), or change how one shows what changed. Use in a repository with a parallax.config.ts, or when asked to set parallax up, when a part of the system isn't shown yet, or when an extension's views don't show what a reviewer needs.
 ---
 
 # Set up parallax
 
-Parallax compares two commits and shows what changed: each extension reads one part of the system at both commits and
-shows the difference as a page of HTML. Parallax runs them, and puts their views on a canvas and in a pull request's
-comment. It ships no extensions and no styles; the project writes both. For ideas, see
-https://github.com/DavidOpDeBeeck/parallax/tree/main/examples.
+More and more code is written by agents and reviewed by a person afterwards. That person needs a clear view of what a
+change means for the application, and what that view is depends on the application. Parallax makes it possible to build
+those views: the project writes an extension per part of its system, and parallax runs them at two commits and puts
+their views on a canvas and in the pull request's comment. It ships no extensions and no styles.
 
-## 1. Install
+Two things hold for every extension:
+
+- **It's deterministic.** It reads the code and data at each commit and compares them; no model or agent decides what
+  changed, summarises it or writes the view. The same change always shows the same way, so the reviewer can trust it.
+- **It's made for this application.** The [examples](https://github.com/DavidOpDeBeeck/parallax/tree/main/examples)
+  are small on purpose: ideas, not templates.
+
+## 1. Find what to show
+
+Before writing code, ask the user what a reviewer of this application needs to see, and where a wrong change costs the
+most. Then choose the form that shows a change in that part best; a list of files is rarely it. A schema as a diagram,
+a workflow as the steps it now takes, a pricing rule as prices before and after, permissions as who can now do what,
+screens as pictures: let the domain decide.
+
+## 2. Install
 
 ```bash
-npm install -D github:DavidOpDeBeeck/parallax#main preact preact-render-to-string
+npm install -D github:DavidOpDeBeeck/parallax#main
 ```
 
-```
-parallax.config.ts          export default { extensions: [design(), api({ path: "api.yaml" })] }
-parallax/
-  design/                   the look every view is built from, and the design extension
-  tools/                    helpers, once two extensions need one
-  api/api.tsx               one folder per extension, one file until it passes about 200 lines
-```
-
-- Extensions use `design/` and `tools/`; those know nothing of extensions, and extensions don't import each other.
-- Views are Preact rendered to a string. Each `.tsx` starts with `/** @jsxImportSource preact */`; parallax reads it
-  as it is, with nothing to build.
-- A big view (cards, a contact sheet, a map of files) stays in its extension until a second one needs it.
-
-## 2. The design
-
-Build the look first and have the user approve it, so every view is built from agreed parts.
-
-1. **Find the project's look**: a style guide, design tokens, CSS variables, a Tailwind or theme config. Map it onto
-   the jobs below (its success colour is new, its danger colour removed). Without one, use the default palette.
-2. **Write `parallax/design/`**:
-   - `style.ts`: the `Status` type (`new`, `changed`, `removed`, `unchanged`), the signs, and the base CSS: the
-     palette as CSS variables for light and dark, body margin, background and fonts.
-   - `page.tsx`: renders a view's page to a string, base CSS first, then the view's own.
-   - `counts.tsx`: the line that starts every view.
-   - `design.tsx`: every part with sample data, and the `design()` extension. Its `compareCommits` runs
-     `git diff --name-status` on `parallax/design` and returns each changed file with its status (added is new,
-     deleted removed, anything else changed), or `undefined`; its `show` gives one view, "Design": the counts, the
-     files, then every part.
-3. **Add `design()`** to `parallax.config.ts`, commit, and run parallax (step 4). Review the Design view with the user,
-   light and dark, until they agree.
-
-A pull request that changes `parallax/design/` then shows the design again. A new part gets a section in `design.tsx`.
-
-**Rules**, the same in every project so views read as one picture:
-
-- One colour per job: new, changed, removed, a reason to look; everything else ink and grey, the same in light and dark.
-- Only `+` new, `~` changed and `−` removed have a sign; anything else is words ("2 breaking").
-- A view starts with its counts: reasons to look, then new, changed and removed, then facts ("+121 −42 lines").
-- Read like a diff: new tinted green, removed red, unchanged grey; a changed value as the line it was and the line it
-  is. A reason to look sits under what it concerns, with its reason.
-- Names in monospace, prose in sans-serif, thin lines, no shadows. Numbers and names, not adjectives; never "risky".
-- Only what a reviewer needs: fold the rest into a line ("10 more files").
-
-| Job | Light | Dark | Tint light | Tint dark |
-|---|---|---|---|---|
-| background | `#ffffff` | `#0d1117` | | |
-| ink | `#1f2328` | `#e6edf3` | | |
-| muted, unchanged | `#656d76` | `#8d96a0` | `#f6f8fa` | `#161b22` |
-| line | `#d0d7de` | `#30363d` | | |
-| new | `#1a7f37` | `#3fb950` | `#e6f6ea` | `#12261e` |
-| changed | `#9a6700` | `#d29922` | `#fdf4d3` | `#272115` |
-| removed | `#cf222e` | `#f85149` | `#ffebe9` | `#2d1517` |
-| reason to look | `#bf3989` | `#db61a2` | `#ffeff7` | `#2b1a27` |
-
-## 3. An extension per part
+`parallax.config.ts` at the repository root lists the extensions in the order their views are shown:
 
 ```ts
-import type { SnapshotExtension } from "parallax"
+export default {extensions: [api({path: "api.yaml"}), screens()]}
+```
 
-export function api({ path }: ApiOptions): SnapshotExtension<ApiSnapshot, ApiDelta> {
-  return {
-    name: "api",
-    extract: (checkout) => extractApi(checkout, path), // one commit → a snapshot, plain JSON
-    compare: compareApi, // two snapshots → a delta, or undefined when nothing changed
-    show: (delta) => [{ title: "API", html: apiPage(delta) }], // a delta → views
-  }
+Keep the extensions in a folder of their own (`parallax/`, say), with the shared look and helpers apart from them.
+Config and extensions are TypeScript or `.tsx` and run without a build. Render views any way you like; Preact with
+`preact-render-to-string` works, with `/** @jsxImportSource preact */` at the top of each `.tsx`.
+
+## 3. The look
+
+Build the look before the first view, from the project's own style (a style guide, design tokens, CSS variables, a
+theme config), and agree it with the user. A view of its own that shows every part with sample data makes it easy to
+review, and shows the look again when a change touches it.
+
+So that views read as one picture:
+
+- One colour per meaning (new, changed, removed, a reason to look), the same in every view, light and dark; the rest
+  stays quiet. Without a project style: new `#1a7f37`/`#3fb950`, changed `#9a6700`/`#d29922`, removed
+  `#cf222e`/`#f85149`, a reason to look `#bf3989`/`#db61a2` (light/dark).
+- Lead with what needs a look, then the counts.
+- Show what a reviewer needs and fold the rest ("10 more files"). Numbers and names, not adjectives.
+
+## 4. An extension per part
+
+```ts
+import type {SnapshotExtension} from "parallax"
+
+export function api({path}: ApiOptions): SnapshotExtension<ApiSnapshot, ApiDelta> {
+    return {
+        name: "api",
+        extract: (checkout) => extractApi(checkout, path), // one commit → a snapshot, plain JSON
+        compare: compareApi, // two snapshots → a delta, or undefined when nothing changed
+        show: (delta) => [{title: "API", html: apiPage(delta)}], // a delta → views
+    }
 }
 ```
 
 - **extract** reads one commit the way the project builds that part: its build, migrations, its own export. Same
   commit, same snapshot: sorted, no times, absolute paths or random ids.
-- **compare** says what changed in this part's own words: each thing with its status, the old value of what changed,
-  and a marker with its reason where a reviewer must look (`breaking`: "`owner` was required").
-- **show** builds each view from the design. The same delta gives the same HTML.
-- When the part is git's own comparison, such as lines added, use `CommitsExtension`: `compareCommits(change)` gets
-  both commits at once.
+- **compare** says what changed in the part's own words, with old values where something changed and a reason where a
+  reviewer must look (`breaking`: "`owner` was required").
+- **show** builds views from the look. Same delta, same HTML.
+- When git itself is the source, such as lines added, use `CommitsExtension`: `compareCommits(change)` gets both
+  commits at once.
 - Snapshot and delta are `type` aliases of plain data; an `interface` doesn't satisfy parallax's `Json`.
-- `extract` and `compare` know nothing of HTML; a delta may use the design's `Status`, nothing else of it.
 
-Ask which part to show and what its reviewer needs first, then add it to the config in the order views should come.
+A view's page loads nothing from the network, is 880 pixels wide and grows down, follows `prefers-color-scheme`, and
+sets its own body margin and background. Parallax heads it with its title.
 
-A page is self-contained (nothing loaded from the network), 880 pixels wide and growing down, follows
-`prefers-color-scheme`, and sets its own body margin and background. It doesn't repeat its title: parallax heads it.
+On the canvas a view is a small application: it may run scripts to expand, filter or click through, as long as it's the
+same on every load. In the comment it's a picture of the page once loaded, so the loaded page alone must show the change.
 
-## 4. Run it
+## 5. Run it
 
 ```bash
 npx parallax --base origin/main --head HEAD --open
 ```
 
-It reads commits, so commit first; extensions run from the working checkout as they are. It writes
-`.parallax/<base>-<head>/` (add `.parallax/` to `.gitignore`): a page per view, `canvas.html` and `change.json`.
+It reads commits, so commit first. It writes `.parallax/<base>-<head>/` (add `.parallax/` to `.gitignore`): a page per
+view, `canvas.html` and `change.json`.
 
 - Draw a change that touches the part, and one that doesn't: that one says "no change".
 - Look at every view light and dark, as a reviewer would.
 - Extract one commit twice: the snapshots must be equal.
 
-## 5. On pull requests
+## 6. On pull requests
 
 ```yaml
 on: pull_request
@@ -139,9 +123,9 @@ jobs:
           attach-token: ${{ secrets.PARALLAX_ATTACH_TOKEN }}
 ```
 
-`npm ci` installs the project's packages, Preact among them, which the views load; use the project's own install
-command. `attach-token` is a person's or bot account's token that can push to the repository; it attaches the pictures to
-the comment. Steps an extension needs (a browser, Docker, a JDK) go before the action.
+`npm ci` installs what the views load; use the project's own install command. `attach-token` is a person's or bot
+account's token that can push to the repository (with Contents Read and Write permission); it attaches the pictures to the comment. Steps an extension needs (a browser, Docker, a JDK) go before
+the action.
 
 ## Pitfalls
 
